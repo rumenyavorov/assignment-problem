@@ -1,5 +1,6 @@
 #include "assignmentproblem.h"
 #include <QDebug>
+#include <VisualizeProblem.h>
 #include <iostream>
 
 using namespace std;
@@ -37,7 +38,7 @@ void AssignmentProblem::set(int row, int col, int value) {
  * @brief AssignmentProblem::print
  * print the 2D array in "matrix" like format
  */
-void AssignmentProblem::print() {
+void AssignmentProblem::printMatrix() {
     qInfo() << QString("Matrix[%1][%2]").arg(agents).arg(tasks);
     for(int i = 0; i < agents; i++) {
         for(int j = 0; j < tasks; j++) {
@@ -46,9 +47,11 @@ void AssignmentProblem::print() {
         cout << endl;
     }
     cout << "-----------------------------" << endl;
-    firstStep();
 }
 
+void AssignmentProblem::startAlgorithm() {
+    firstStep();
+}
 
 /**
  * @brief AssignmentProblem::findSmallestInRow
@@ -63,6 +66,18 @@ int AssignmentProblem::findSmallestInRow(int row, vector<vector<int>> data) {
     for(int i = 0; i < tasks; i++) {
         if(data[row][i] < leastElement) {
             leastElement = data[row][i];
+        }
+    }
+
+    return leastElement;
+}
+
+int AssignmentProblem::findSmallestInColumn(int column, vector<vector<int>> data) {
+    //set first element so we can compare to others
+    int leastElement = data[0][column];
+    for(int i = 0; i < tasks; i++) {
+        if(data[i][column] < leastElement) {
+            leastElement = data[i][column];
         }
     }
 
@@ -86,8 +101,40 @@ void AssignmentProblem::firstStep() {
 
     vector<int> smallestElements;
     for(int i = 0; i < agents; i++) {
-        smallestElements.push_back(findSmallestInRow(i, matrix));
+        int smallestElement = findSmallestInRow(i, matrix);
+        smallestElements.push_back(smallestElement);
+        subtractFromRow(i, smallestElement);
     }
-    printVector(smallestElements);
+
 }
 
+/**
+ * @brief AssignmentProblem::secondStep
+ * second step
+ * find lowest element in each column
+ * and subtract it from all elements of that column
+ */
+void AssignmentProblem::secondStep() {
+    vector<int> smallestElements;
+    for(int i = 0; i < tasks; i++) {
+        int smallestElement = findSmallestInColumn(i, matrix);
+        smallestElements.push_back(smallestElement);
+        subtractFromColumn(i, smallestElement);
+    }
+}
+
+void AssignmentProblem::subtractFromRow(int row, int smallestElement) {
+    for(int i = 0; i < agents; i++) {
+        matrix[row][i] = matrix[row][i] - smallestElement;
+    }
+}
+
+void AssignmentProblem::subtractFromColumn(int col, int smallestElement) {
+    for(int i = 0; i < tasks; i++) {
+        matrix[i][col] = matrix[i][col] - smallestElement;
+    }
+}
+
+vector<vector<int>> AssignmentProblem::getMatrix() {
+    return matrix;
+}

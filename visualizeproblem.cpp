@@ -1,7 +1,11 @@
 #include "visualizeproblem.h"
+#include "qscreen.h"
 #include "ui_visualizeproblem.h"
-#include "assignmentproblem.h"
+#include "AssignmentProblem.h"
 
+#include <QGraphicsScene>
+#include <QGraphicsTextItem>
+#include <QGraphicsView>
 #include <QLabel>
 #include <QPushButton>
 #include <QTextEdit>
@@ -13,6 +17,8 @@ VisualizeProblem::VisualizeProblem(int agents, QWidget *parent) :
     ui->setupUi(this);
     problemGrid = new QGridLayout(this);
     tableGrid = new QTableWidget(this);
+
+    resize(QGuiApplication::primaryScreen()->availableGeometry().size() * 0.4);
 
     initializeGrid(agents);
 }
@@ -68,6 +74,7 @@ void VisualizeProblem::initializeTable(int agents) {
     tableGrid->setVerticalHeaderLabels(agentHeaderList);
     tableGrid->setHorizontalHeaderLabels(taskHeaderList);
 
+    ap = new AssignmentProblem(agents, agents);
 
     for (int row = 0; row < agents; row++) {
             for (int col = 0; col < agents; col++) {
@@ -90,38 +97,85 @@ void VisualizeProblem::initializeGrid(int agents) {
 
     initSubmitButton();
 
-    connect(submitBtn, &QPushButton::clicked, this, &VisualizeProblem::submitProblem);
+    connect(submitBtn, &QPushButton::clicked, this, &VisualizeProblem::submitProblemHandler);
 }
 
 //function to handle button actions
-void VisualizeProblem::submitProblem() {
+void VisualizeProblem::submitProblemHandler() {
     qInfo() << "SubmitButton CLICKED!!!!!!";
     setCellValues();
+    tableGrid->update();
+    problemGrid->removeWidget(submitBtn);
+    submitBtn->deleteLater();
+
+    initFirstStepButton();
+}
+
+void VisualizeProblem::firstStepBtnHandler() {
+    qInfo() << "Step button clicked";
+    ap->firstStep();
+    ap->printMatrix();
+    updateTable(ap->getAgents(), ap->getTasks(),ap->getMatrix());
+
+    problemGrid->removeWidget(firstStepBtn);
+    firstStepBtn->deleteLater();
+
+    initSecondStepButton();
+}
+
+void VisualizeProblem::secondStepBtnHandler() {
+    secondStepBtn->setText("Step 2");
+    ap->secondStep();
+    ap->printMatrix();
+    updateTable(ap->getAgents(), ap->getTasks(),ap->getMatrix());
+
 }
 
 // Initialize submit button
 void VisualizeProblem::initSubmitButton() {
-    qInfo() << "Initialize SubmitButton";
     submitBtn = new QPushButton("Submit values");
     problemGrid->addWidget(submitBtn);
 }
 
+void VisualizeProblem::initFirstStepButton() {
+    firstStepBtn = new QPushButton("Step 1");
+    problemGrid->addWidget(firstStepBtn);
+    connect(firstStepBtn, &QPushButton::clicked, this, &VisualizeProblem::firstStepBtnHandler);
+}
+
+void VisualizeProblem::initSecondStepButton() {
+    secondStepBtn = new QPushButton("Step 2");
+    problemGrid->addWidget(secondStepBtn);
+    connect(secondStepBtn, &QPushButton::clicked, this, &VisualizeProblem::secondStepBtnHandler);
+}
+
+void VisualizeProblem::updateTable(int agents, int tasks, vector<vector<int>> matrix) {
+    for (int row = 0; row < agents; row++) {
+        for (int col = 0; col < tasks; col++) {
+            QTableWidgetItem* item = new QTableWidgetItem(QString::number(matrix[row][col]));
+            tableGrid->setItem(row, col, item);
+        }
+    }
+}
+
+//set initial cell values based on input
 void VisualizeProblem::setCellValues() {
     int rows = tableGrid->rowCount();
     int cols = tableGrid->columnCount();
 
-    AssignmentProblem *ap = new AssignmentProblem(rows, cols);
+//    vector<vector<int>> matrix = {{10,12,19,11}, {5,10,7,8}, {12,14,13,11}, {8,15,11,9}};
+
+//    ap->setMatrixData(matrix);
 
     for(int row = 0; row < rows; row++) {
         for(int col = 0; col < cols; col++) {
             QString item = tableGrid->item(row, col)->data(Qt::DisplayRole).toString();
             int itemVal = item.toInt();
 
+
             ap->set(row, col, itemVal);
         }
     }
-
-    ap->print();
 }
 
 

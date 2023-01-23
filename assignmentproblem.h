@@ -15,7 +15,7 @@ public:
 
     int at(int row, int col) const;
     void set(int row, int col, int value);
-    void print();
+    void printMatrix();
 
     int getAgents() const { return agents; }
     int getTasks() const { return tasks; }
@@ -24,9 +24,22 @@ public:
     void setTasks(int totalTasks) { this->tasks = totalTasks; }
 
     void firstStep();
-    int findSmallest(vector<vector<int>> mx_data);
+    void secondStep();
 
+    int findSmallest(vector<vector<int>> mx_data);
     int findSmallestInRow(int row, vector<vector<int> > data);
+    int findSmallestInColumn(int column, vector<vector<int> > data);
+
+    void subtractFromRow(int row, int smallestElements);
+    void subtractFromColumn(int col, int smallestElement);
+
+    void startAlgorithm();
+
+    vector<vector<int>> getMatrix();
+
+    void setMatrixData(vector<vector<int>> mx_data) {
+        matrix = mx_data;
+    }
 private:
     int agents;
     int tasks;
