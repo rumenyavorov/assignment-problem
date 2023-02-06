@@ -30,8 +30,8 @@
    <widget class="QLabel" name="agentsLbl">
     <property name="geometry">
      <rect>
-      <x>270</x>
-      <y>180</y>
+      <x>220</x>
+      <y>210</y>
       <width>40</width>
       <height>16</height>
      </rect>
@@ -61,6 +61,29 @@
     </property>
     <property name="text">
      <string>Please input agents performing N tasks (agents = tasks) -&gt; balanced</string>
+    </property>
+   </widget>
+   <widget class="QPlainTextEdit" name="tasksText">
+    <property name="geometry">
+     <rect>
+      <x>270</x>
+      <y>240</y>
+      <width>131</width>
+      <height>31</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="tasksLbl">
+    <property name="geometry">
+     <rect>
+      <x>230</x>
+      <y>250</y>
+      <width>40</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Tasks</string>
     </property>
    </widget>
   </widget>

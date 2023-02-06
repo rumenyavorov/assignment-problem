@@ -9,7 +9,7 @@
 #include <QPushButton>
 #include <QTextEdit>
 
-VisualizeProblem::VisualizeProblem(int agents, QWidget *parent) :
+VisualizeProblem::VisualizeProblem(int agents, int tasks, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::VisualizeProblem)
 {
@@ -20,27 +20,12 @@ VisualizeProblem::VisualizeProblem(int agents, QWidget *parent) :
 
 //    resize(QGuiApplication::primaryScreen()->availableGeometry().size() * 0.4);
 
-    initializeGrid(agents);
+    initializeGrid(agents, tasks);
 }
 
 VisualizeProblem::~VisualizeProblem()
 {
     delete ui;
-}
-
-void VisualizeProblem::initializeAgentsAndTasks(int agents)
-{
-    for(int i = 0; i < agents; i++) {
-        QString str = QString::number(i + 1);
-        QLabel *lbl = new QLabel("Agent - " + str);
-        problemGrid->addWidget(lbl, i + 1, 0, 1, 1);
-    }
-
-    for(int j = 0; j < agents; j++) {
-        QString str = QString::number(j + 1);
-        QLabel *lbl = new QLabel("Task - " + str);
-        problemGrid->addWidget(lbl, 0, j + 1, 1, 2);
-    }
 }
 
 QStringList initializeTableRowHeaders(int agents) {
@@ -64,20 +49,20 @@ QStringList initializeTableColumnHeaders(int agents) {
 }
 
 //initialize table with NxN (agents * tasks (tasks = agents))
-void VisualizeProblem::initializeTable(int agents) {
+void VisualizeProblem::initializeTable(int agents, int tasks) {
 
-    int matrix[agents][agents];
+    int matrix[agents][tasks];
 
     QStringList agentHeaderList = initializeTableRowHeaders(agents);
-    QStringList taskHeaderList = initializeTableColumnHeaders(agents);
+    QStringList taskHeaderList = initializeTableColumnHeaders(tasks);
 
     tableGrid->setVerticalHeaderLabels(agentHeaderList);
     tableGrid->setHorizontalHeaderLabels(taskHeaderList);
 
-    ap = new AssignmentProblem(agents, agents);
+    ap = new AssignmentProblem(agents, tasks);
 
     for (int row = 0; row < agents; row++) {
-            for (int col = 0; col < agents; col++) {
+            for (int col = 0; col < tasks; col++) {
                 QTableWidgetItem* item = new QTableWidgetItem(QString::number(matrix[row][col]));
                 item->setText("Please set cost");
                 tableGrid->setItem(row, col, item);
@@ -86,12 +71,11 @@ void VisualizeProblem::initializeTable(int agents) {
 }
 
 //initialize GridLayout
-void VisualizeProblem::initializeGrid(int agents) {
-    qInfo() << "In VisualizeProblem with agents - " + QString::number(agents);
+void VisualizeProblem::initializeGrid(int agents, int tasks) {
     tableGrid->setRowCount(agents);
-    tableGrid->setColumnCount(agents);
+    tableGrid->setColumnCount(tasks);
 
-    initializeTable(agents);
+    initializeTable(agents, tasks);
 
     problemGrid->addWidget(tableGrid);
 
@@ -150,8 +134,8 @@ void VisualizeProblem::thirdStepBtnHandler() {
         }
     }
 
-//    problemGrid->removeWidget(thirdStepBtn);
-//    thirdStepBtn->deleteLater();
+    problemGrid->removeWidget(thirdStepBtn);
+    thirdStepBtn->deleteLater();
 }
 
 int VisualizeProblem::findLeftZeros() {
@@ -205,6 +189,8 @@ void VisualizeProblem::setCellValues() {
     int rows = tableGrid->rowCount();
     int cols = tableGrid->columnCount();
 
+    //https://www.brainkart.com/article/Solution-of-assignment-problems-(Hungarian-Method)_39044/
+
     //EXAMPLE 1 4x4 - SUCCESS
 //    vector<vector<int>> matrix = {{10,12,19,11}, {5,10,7,8}, {12,14,13,11}, {8,15,11,9}};
 //    ap->setMatrixData(matrix);
@@ -217,9 +203,9 @@ void VisualizeProblem::setCellValues() {
 
     //EXAMPLE 3 4x3 - SUCCESS
     //UNBALANCED
-//    vector<vector<int>> matrix = {{9, 26, 15, 0}, {13,27,6,0}, {35,20,15,0}, {18,30,20,0}};
-//    ap->setMatrixData(matrix);
-//    updateTable(rows, cols, matrix);
+    vector<vector<int>> matrix = {{9, 26, 15, 0}, {13,27,6,0}, {35,20,15,0}, {18,30,20,0}};
+    ap->setMatrixData(matrix);
+    updateTable(rows, cols, matrix);
 
 //    for(int row = 0; row < rows; row++) {
 //        for(int col = 0; col < cols; col++) {

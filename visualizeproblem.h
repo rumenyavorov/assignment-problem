@@ -22,7 +22,7 @@ class VisualizeProblem : public QWidget
     Q_OBJECT
 
 public:
-    explicit VisualizeProblem(int agents, QWidget *parent = nullptr);
+    explicit VisualizeProblem(int agents, int tasks, QWidget *parent = nullptr);
     ~VisualizeProblem();
 
     void updateTable();
@@ -58,9 +58,9 @@ private:
     QPushButton *thirdStepBtn;
 //    QPushButton *fourthStepBtn;
 
-    void initializeGrid(int agents);
-    void initializeAgentsAndTasks(int agents);
-    void initializeTable(int agents);
+    void initializeGrid(int agents, int tasks);
+    void initializeAgentsAndTasks(int agents, int tasks);
+    void initializeTable(int agents, int tasks);
 
     void setCellValues();
 

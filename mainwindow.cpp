@@ -14,8 +14,9 @@ MainWindow::MainWindow(QWidget *parent)
 
 void MainWindow::handleSubmitBtn() {
     int agents = ui->agentsText->toPlainText().toInt();
+    int tasks = ui->tasksText->toPlainText().toInt();
 
-    VisualizeProblem *vp = new VisualizeProblem(agents);
+    VisualizeProblem *vp = new VisualizeProblem(agents, tasks);
     vp->show();
 
 }
