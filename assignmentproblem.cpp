@@ -122,6 +122,39 @@ void AssignmentProblem::secondStep() {
         subtractFromColumn(i, smallestElement);
     }
 }
+/**
+ * @brief AssignmentProblem::thirdStep
+ * find the only zero in row and mark it with '-1', then mark the other zeros in the column with '-2'
+ * @return
+ */
+void AssignmentProblem::thirdStep() {
+
+//    int row = findZeroInRow();
+//    qInfo() << "row: " << row << Qt::endl;
+//    int col = markOnlyZeroInRow(row);
+//    qInfo() << "col: " << col << Qt::endl;
+//    markZerosInColumn(col);
+
+    int col = 0;
+    qInfo() <<"ROW: " << findZeroInRow();
+    while(zerosLeft() > 0) {
+        for(int c = 0; c < tasks; c++) {
+            int row = findRowWithOneZero();
+            if(matrix[row][c] == 0) {
+                matrix[row][c] = -1;
+                col = c;
+            }
+
+            for(int r = 0; r < agents; r++) {
+                if(matrix[r][col] == 0) {
+                    matrix[r][col] = -2;
+                }
+            }
+            printMatrix();
+            qInfo() << zerosLeft() << Qt::endl;
+        }
+    }
+}
 
 void AssignmentProblem::subtractFromRow(int row, int smallestElement) {
     for(int i = 0; i < agents; i++) {
@@ -133,6 +166,80 @@ void AssignmentProblem::subtractFromColumn(int col, int smallestElement) {
     for(int i = 0; i < tasks; i++) {
         matrix[i][col] = matrix[i][col] - smallestElement;
     }
+}
+
+int AssignmentProblem::findZeroInRow() {
+    //return -1 if it doesn't find row with one zero to avoid logical bug?
+    int row = -1;
+    for(int i = 0; i < agents; i++) {
+        int zeroCounter = 0;
+
+        for(int j = 0; j < tasks; j++) {
+            if(matrix[i][j] == 0) {
+                zeroCounter++;
+            }
+        }
+        if(zeroCounter == 1) {
+            row = i;
+        }
+    }
+
+    return row;
+}
+
+int AssignmentProblem::markOnlyZeroInRow(int row) {
+    int col = -1;
+
+    for(int i = 0; i < agents; i++) {
+        if(matrix[row][i] == 0) {
+            matrix[row][i] = -1;
+            col = i;
+        }
+    }
+
+    return col;
+}
+
+void AssignmentProblem::markZerosInColumn(int col) {
+    for(int i = 0; i < tasks; i++) {
+        if(matrix[i][col] == 0) {
+            matrix[i][col] = -2;
+        }
+    }
+}
+
+int AssignmentProblem::zerosLeft() {
+
+    int zerosLeft = 0;
+
+    for(int i = 0; i < agents; i++) {
+        for(int j = 0; j < tasks; j++) {
+            if(matrix[i][j] == 0) {
+                zerosLeft++;
+            }
+        }
+    }
+
+    return zerosLeft;
+}
+
+int AssignmentProblem::findRowWithOneZero() {
+    //return -1 if it doesn't find row with one zero to avoid logical bug?
+    int row = 0;
+    for(int i = 0; i < agents; i++) {
+        int zeroCounter = 0;
+
+        for(int j = 0; j < tasks; j++) {
+            if(matrix[i][j] == 0) {
+                zeroCounter++;
+            }
+        }
+        if(zeroCounter == 1) {
+            row = i;
+        }
+    }
+
+    return row;
 }
 
 vector<vector<int>> AssignmentProblem::getMatrix() {

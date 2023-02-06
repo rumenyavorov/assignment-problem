@@ -1,7 +1,6 @@
 #include "visualizeproblem.h"
-#include "qscreen.h"
 #include "ui_visualizeproblem.h"
-#include "AssignmentProblem.h"
+#include <AssignmentProblem.h>
 
 #include <QGraphicsScene>
 #include <QGraphicsTextItem>
@@ -15,10 +14,11 @@ VisualizeProblem::VisualizeProblem(int agents, QWidget *parent) :
     ui(new Ui::VisualizeProblem)
 {
     ui->setupUi(this);
+
     problemGrid = new QGridLayout(this);
     tableGrid = new QTableWidget(this);
 
-    resize(QGuiApplication::primaryScreen()->availableGeometry().size() * 0.4);
+//    resize(QGuiApplication::primaryScreen()->availableGeometry().size() * 0.4);
 
     initializeGrid(agents);
 }
@@ -129,6 +129,42 @@ void VisualizeProblem::secondStepBtnHandler() {
     ap->printMatrix();
     updateTable(ap->getAgents(), ap->getTasks(),ap->getMatrix());
 
+    problemGrid->removeWidget(secondStepBtn);
+    secondStepBtn->deleteLater();
+
+    initThirdStepButton();
+}
+
+void VisualizeProblem::thirdStepBtnHandler() {
+    thirdStepBtn->setText("Step 3");
+
+    ap->thirdStep();
+    vector<vector<int>> optimalMatrix = ap->getMatrix();
+    for(int i = 0; i < ap->getAgents(); i++) {
+        for(int j = 0; j < ap->getTasks(); j++) {
+            if(optimalMatrix[i][j] == -1) {
+                paintBorder(tableGrid->item(i, j), Qt::yellow, QString("O"));
+            } else if(optimalMatrix[i][j] == -2) {
+                paintBorder(tableGrid->item(i, j), Qt::red, QString("X"));
+            }
+        }
+    }
+
+    problemGrid->removeWidget(thirdStepBtn);
+    thirdStepBtn->deleteLater();
+}
+
+int VisualizeProblem::findLeftZeros() {
+    int z = 0;
+    for(int i = 0; i < 4; i++) {
+        for(int j = 0; j < 4; j++) {
+            if(tableGrid->item(i, j)->text() == "0") {
+                z++;
+            }
+        }
+    }
+
+    return z;
 }
 
 // Initialize submit button
@@ -149,6 +185,12 @@ void VisualizeProblem::initSecondStepButton() {
     connect(secondStepBtn, &QPushButton::clicked, this, &VisualizeProblem::secondStepBtnHandler);
 }
 
+void VisualizeProblem::initThirdStepButton() {
+    thirdStepBtn = new QPushButton("Step 3");
+    problemGrid->addWidget(thirdStepBtn);
+    connect(thirdStepBtn, &QPushButton::clicked, this, &VisualizeProblem::thirdStepBtnHandler);
+}
+
 void VisualizeProblem::updateTable(int agents, int tasks, vector<vector<int>> matrix) {
     for (int row = 0; row < agents; row++) {
         for (int col = 0; col < tasks; col++) {
@@ -163,19 +205,38 @@ void VisualizeProblem::setCellValues() {
     int rows = tableGrid->rowCount();
     int cols = tableGrid->columnCount();
 
-//    vector<vector<int>> matrix = {{10,12,19,11}, {5,10,7,8}, {12,14,13,11}, {8,15,11,9}};
+    //EXAMPLE 1 4x4
+    vector<vector<int>> matrix = {{10,12,19,11}, {5,10,7,8}, {12,14,13,11}, {8,15,11,9}};
+    ap->setMatrixData(matrix);
+    updateTable(rows, cols, matrix);
 
+    //EXAMPLE 2 5x5
+//    vector<vector<int>> matrix = {{8,4,2,6,1}, {0,9,5,5,4}, {3,8,9,2,6}, {4,3,1,0,3}, {9,5,8,9,5}};
 //    ap->setMatrixData(matrix);
+//    updateTable(rows, cols, matrix);
 
-    for(int row = 0; row < rows; row++) {
-        for(int col = 0; col < cols; col++) {
-            QString item = tableGrid->item(row, col)->data(Qt::DisplayRole).toString();
-            int itemVal = item.toInt();
+    //EXAMPLE 3 4x4
+//    vector<vector<int>> matrix = {{120,100,80,90}, {80,90,110,70}, {110,140,120,100}, {90,90,80,90}};
+//    ap->setMatrixData(matrix);
+//    updateTable(rows, cols, matrix);
+//    for(int row = 0; row < rows; row++) {
+//        for(int col = 0; col < cols; col++) {
+//            QString item = tableGrid->item(row, col)->data(Qt::DisplayRole).toString();
+//            int itemVal = item.toInt();
 
 
-            ap->set(row, col, itemVal);
-        }
-    }
+//            ap->set(row, col, itemVal);
+//        }
+//    }
+}
+
+void VisualizeProblem::paintBorder(QTableWidgetItem *item, Qt::GlobalColor color, QString txt) {
+    QBrush brush;
+
+    brush.setStyle(Qt::SolidPattern);
+    brush.setColor(color);
+    item->setText(txt);
+    item->setBackground(brush);
 }
 
 

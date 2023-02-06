@@ -25,6 +25,7 @@ public:
 
     void firstStep();
     void secondStep();
+    void thirdStep();
 
     int findSmallest(vector<vector<int>> mx_data);
     int findSmallestInRow(int row, vector<vector<int> > data);
@@ -40,10 +41,19 @@ public:
     void setMatrixData(vector<vector<int>> mx_data) {
         matrix = mx_data;
     }
+    int zerosLeft(vector<vector<int> > matrixData);
+//    vector<int> findOnlyZero();
 private:
     int agents;
     int tasks;
     vector<vector<int>> matrix;
+    int findRowWithOneZero();
+    int zerosLeft();
+    void markOnlyZeroInRow();
+    void markZerosInColumn();
+    void markZerosInColumn(int col);
+    int markOnlyZeroInRow(int row);
+    int findZeroInRow();
 };
 
 #endif // ASSIGNMENTPROBLEM_H

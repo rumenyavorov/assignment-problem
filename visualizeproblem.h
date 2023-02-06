@@ -7,6 +7,8 @@
 #include <QTableWidget>
 #include <QPushButton>
 #include <vector>
+#include <QGraphicsScene>
+#include <QGraphicsView>
 #include <AssignmentProblem.h>
 
 using namespace std;
@@ -29,6 +31,9 @@ public:
     AssignmentProblem *ap;
 
     void graph();
+    int findLeftZeros();
+    void markMostEfficient(int row, int col);
+    void markOtherZeros(int row, int col);
 private slots:
     void initSubmitButton();
     void submitProblemHandler();
@@ -37,8 +42,8 @@ private slots:
     void firstStepBtnHandler();
     void initSecondStepButton();
     void secondStepBtnHandler();
-//    void initThirthStepButton();
-//    void thirthStepBtnHandler();
+    void initThirdStepButton();
+    void thirdStepBtnHandler();
 //    void initFourthStepButton();
 //    void fourthStepBtnHandler();
 
@@ -50,7 +55,7 @@ private:
     QPushButton *submitBtn;
     QPushButton *firstStepBtn;
     QPushButton *secondStepBtn;
-//    QPushButton *thirthStepBtn;
+    QPushButton *thirdStepBtn;
 //    QPushButton *fourthStepBtn;
 
     void initializeGrid(int agents);
@@ -59,6 +64,11 @@ private:
 
     void setCellValues();
 
+    void paintBorder(QTableWidgetItem *item, Qt::GlobalColor color);
+    int excludeColumn();
+    void markMostEfficient(int row, int col, int ec);
+    void markOtherZeros(int row, int col, int ec);
+    void paintBorder(QTableWidgetItem *item, Qt::GlobalColor color, QString txt);
 };
 
 #endif // VISUALIZEPROBLEM_H
