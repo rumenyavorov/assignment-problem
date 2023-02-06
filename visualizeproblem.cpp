@@ -150,8 +150,8 @@ void VisualizeProblem::thirdStepBtnHandler() {
         }
     }
 
-    problemGrid->removeWidget(thirdStepBtn);
-    thirdStepBtn->deleteLater();
+//    problemGrid->removeWidget(thirdStepBtn);
+//    thirdStepBtn->deleteLater();
 }
 
 int VisualizeProblem::findLeftZeros() {
@@ -205,20 +205,22 @@ void VisualizeProblem::setCellValues() {
     int rows = tableGrid->rowCount();
     int cols = tableGrid->columnCount();
 
-    //EXAMPLE 1 4x4
-    vector<vector<int>> matrix = {{10,12,19,11}, {5,10,7,8}, {12,14,13,11}, {8,15,11,9}};
-    ap->setMatrixData(matrix);
-    updateTable(rows, cols, matrix);
+    //EXAMPLE 1 4x4 - SUCCESS
+//    vector<vector<int>> matrix = {{10,12,19,11}, {5,10,7,8}, {12,14,13,11}, {8,15,11,9}};
+//    ap->setMatrixData(matrix);
+//    updateTable(rows, cols, matrix);
 
-    //EXAMPLE 2 5x5
+    //EXAMPLE 2 5x5 - SUCCESS
 //    vector<vector<int>> matrix = {{8,4,2,6,1}, {0,9,5,5,4}, {3,8,9,2,6}, {4,3,1,0,3}, {9,5,8,9,5}};
 //    ap->setMatrixData(matrix);
 //    updateTable(rows, cols, matrix);
 
-    //EXAMPLE 3 4x4
-//    vector<vector<int>> matrix = {{120,100,80,90}, {80,90,110,70}, {110,140,120,100}, {90,90,80,90}};
+    //EXAMPLE 3 4x3 - SUCCESS
+    //UNBALANCED
+//    vector<vector<int>> matrix = {{9, 26, 15, 0}, {13,27,6,0}, {35,20,15,0}, {18,30,20,0}};
 //    ap->setMatrixData(matrix);
 //    updateTable(rows, cols, matrix);
+
 //    for(int row = 0; row < rows; row++) {
 //        for(int col = 0; col < cols; col++) {
 //            QString item = tableGrid->item(row, col)->data(Qt::DisplayRole).toString();
