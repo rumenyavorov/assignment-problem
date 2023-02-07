@@ -24,6 +24,7 @@ void MainWindow::handleSubmitBtn() {
 void MainWindow::initializeComponents() {
     ui->submitBtn->setText("Submit");
     ui->agentsText->setPlaceholderText("Input agents");
+    ui->tasksText->setPlaceholderText("Input tasks");
     connect(ui->submitBtn, &QPushButton::released, this, &MainWindow::handleSubmitBtn);
 }
 

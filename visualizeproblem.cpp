@@ -48,7 +48,7 @@ QStringList initializeTableColumnHeaders(int agents) {
     return list;
 }
 
-//initialize table with NxN (agents * tasks (tasks = agents))
+//initialize table with NxN
 void VisualizeProblem::initializeTable(int agents, int tasks) {
 
     int matrix[agents][tasks];
@@ -84,9 +84,8 @@ void VisualizeProblem::initializeGrid(int agents, int tasks) {
     connect(submitBtn, &QPushButton::clicked, this, &VisualizeProblem::submitProblemHandler);
 }
 
-//function to handle button actions
+//handle submit button actions
 void VisualizeProblem::submitProblemHandler() {
-    qInfo() << "SubmitButton CLICKED!!!!!!";
     setCellValues();
     tableGrid->update();
     problemGrid->removeWidget(submitBtn);
@@ -94,11 +93,14 @@ void VisualizeProblem::submitProblemHandler() {
 
     initFirstStepButton();
 }
-
+/**
+ * @brief VisualizeProblem::firstStepBtnHandler
+ * execute first step, update table, remove button
+ * and initializes second step button
+ */
 void VisualizeProblem::firstStepBtnHandler() {
-    qInfo() << "Step button clicked";
     ap->firstStep();
-    ap->printMatrix();
+//    ap->printMatrix();
     updateTable(ap->getAgents(), ap->getTasks(),ap->getMatrix());
 
     problemGrid->removeWidget(firstStepBtn);
@@ -110,7 +112,7 @@ void VisualizeProblem::firstStepBtnHandler() {
 void VisualizeProblem::secondStepBtnHandler() {
     secondStepBtn->setText("Step 2");
     ap->secondStep();
-    ap->printMatrix();
+//    ap->printMatrix();
     updateTable(ap->getAgents(), ap->getTasks(),ap->getMatrix());
 
     problemGrid->removeWidget(secondStepBtn);
@@ -119,6 +121,11 @@ void VisualizeProblem::secondStepBtnHandler() {
     initThirdStepButton();
 }
 
+/**
+ * @brief VisualizeProblem::thirdStepBtnHandler
+ * executes third step to obtain the optimal matrix
+ * marks optimal and non optimal tasks by agents
+ */
 void VisualizeProblem::thirdStepBtnHandler() {
     thirdStepBtn->setText("Step 3");
 
@@ -138,10 +145,14 @@ void VisualizeProblem::thirdStepBtnHandler() {
     thirdStepBtn->deleteLater();
 }
 
+/**
+ * @brief VisualizeProblem::findLeftZeros
+ * @return
+ */
 int VisualizeProblem::findLeftZeros() {
     int z = 0;
-    for(int i = 0; i < 4; i++) {
-        for(int j = 0; j < 4; j++) {
+    for(int i = 0; i < ap->getAgents(); i++) {
+        for(int j = 0; j < ap->getTasks(); j++) {
             if(tableGrid->item(i, j)->text() == "0") {
                 z++;
             }
@@ -192,9 +203,9 @@ void VisualizeProblem::setCellValues() {
     //https://www.brainkart.com/article/Solution-of-assignment-problems-(Hungarian-Method)_39044/
 
     //EXAMPLE 1 4x4 - SUCCESS
-//    vector<vector<int>> matrix = {{10,12,19,11}, {5,10,7,8}, {12,14,13,11}, {8,15,11,9}};
-//    ap->setMatrixData(matrix);
-//    updateTable(rows, cols, matrix);
+    vector<vector<int>> matrix = {{10,12,19,11}, {5,10,7,8}, {12,14,13,11}, {8,15,11,9}};
+    ap->setMatrixData(matrix);
+    updateTable(rows, cols, matrix);
 
     //EXAMPLE 2 5x5 - SUCCESS
 //    vector<vector<int>> matrix = {{8,4,2,6,1}, {0,9,5,5,4}, {3,8,9,2,6}, {4,3,1,0,3}, {9,5,8,9,5}};
@@ -203,10 +214,18 @@ void VisualizeProblem::setCellValues() {
 
     //EXAMPLE 3 4x3 - SUCCESS
     //UNBALANCED
-    vector<vector<int>> matrix = {{9, 26, 15, 0}, {13,27,6,0}, {35,20,15,0}, {18,30,20,0}};
-    ap->setMatrixData(matrix);
-    updateTable(rows, cols, matrix);
+//    vector<vector<int>> matrix = {{9, 26, 15, 0}, {13,27,6,0}, {35,20,15,0}, {18,30,20,0}};
+//    ap->setMatrixData(matrix);
+//    updateTable(rows, cols, matrix);
 
+
+    //EXAMPLE 4 4x4 - FAIL - infinite loop
+//    vector<vector<int>> matrix = {{20,25,22,28}, {15,18,23,17}, {19,17,21,24}, {25,23,24,24}};
+//    ap->setMatrixData(matrix);
+//    updateTable(rows, cols, matrix);
+
+
+    //MANUAL INPUT
 //    for(int row = 0; row < rows; row++) {
 //        for(int col = 0; col < cols; col++) {
 //            QString item = tableGrid->item(row, col)->data(Qt::DisplayRole).toString();

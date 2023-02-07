@@ -84,13 +84,6 @@ int AssignmentProblem::findSmallestInColumn(int column, vector<vector<int>> data
     return leastElement;
 }
 
-void printVector(vector<int> data) {
-    for(int e : data) {
-        qInfo() << e;
-    }
-}
-
-
 /**
  * @brief AssignmentProblem::firstStep
  * first step of the algorithm
@@ -124,7 +117,8 @@ void AssignmentProblem::secondStep() {
 }
 /**
  * @brief AssignmentProblem::thirdStep
- * find the only zero in row and mark it with '-1', then mark the other zeros in the column with '-2'
+ * find the only zero(optimal) in row and mark it
+ * with '-1', then mark the other zeros(nonoptimal) in the column with '-2'
  * @return
  */
 void AssignmentProblem::thirdStep() {
@@ -133,25 +127,44 @@ void AssignmentProblem::thirdStep() {
         int row = findZeroInRow();
         if(row != -1) {
             int col = markOnlyZeroInRow(row);
-            markZerosInColumn(col);
+            if(col != -1) {
+                markZerosInColumn(col);
+            }
+        }
+        printMatrix();
+        if(zerosLeft() == 0) {
+            break;
         }
     }
 }
 
+/**
+ * @brief AssignmentProblem::subtractFromRow
+ * @param row index to subtract from
+ * @param smallestElement to subtract from row?
+ */
 void AssignmentProblem::subtractFromRow(int row, int smallestElement) {
     for(int i = 0; i < agents; i++) {
         matrix[row][i] = matrix[row][i] - smallestElement;
     }
 }
 
+/**
+ * @brief AssignmentProblem::subtractFromColumn
+ * @param col
+ * @param smallestElement
+ */
 void AssignmentProblem::subtractFromColumn(int col, int smallestElement) {
     for(int i = 0; i < tasks; i++) {
         matrix[i][col] = matrix[i][col] - smallestElement;
     }
 }
 
+/**
+ * @brief AssignmentProblem::findZeroInRow
+ * @return find only zero in row
+ */
 int AssignmentProblem::findZeroInRow() {
-    //return -1 if it doesn't find row with one zero to avoid logical bug?
     int row = -1;
     for(int i = 0; i < agents; i++) {
         int zeroCounter = 0;
@@ -169,6 +182,11 @@ int AssignmentProblem::findZeroInRow() {
     return row;
 }
 
+/**
+ * @brief AssignmentProblem::markOnlyZeroInRow
+ * @param row
+ * @return
+ */
 int AssignmentProblem::markOnlyZeroInRow(int row) {
     int col = -1;
 
@@ -182,6 +200,10 @@ int AssignmentProblem::markOnlyZeroInRow(int row) {
     return col;
 }
 
+/**
+ * @brief AssignmentProblem::markZerosInColumn
+ * @param col - which column to mark zeros as nonoptimal
+ */
 void AssignmentProblem::markZerosInColumn(int col) {
     for(int i = 0; i < tasks; i++) {
         if(matrix[i][col] == 0) {
@@ -190,6 +212,10 @@ void AssignmentProblem::markZerosInColumn(int col) {
     }
 }
 
+/**
+ * @brief AssignmentProblem::zerosLeft
+ * @return count all zeros left in matrix
+ */
 int AssignmentProblem::zerosLeft() {
 
     int zerosLeft = 0;
@@ -205,6 +231,10 @@ int AssignmentProblem::zerosLeft() {
     return zerosLeft;
 }
 
+/**
+ * @brief AssignmentProblem::getMatrix
+ * @return matrix data
+ */
 vector<vector<int>> AssignmentProblem::getMatrix() {
     return matrix;
 }
